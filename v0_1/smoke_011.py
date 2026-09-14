@@ -30,4 +30,6 @@ if shot.isNull() or not shot.save('smoke_011.png'):
     raise SystemExit('FAIL: unable to save UI smoke screenshot')
 
 print(f'OK embedded-logo={logo.width()}x{logo.height()} background={w.bg.pixmap.width()}x{w.bg.pixmap.height()} screenshot={shot.width()}x{shot.height()}')
-w.close()
+w.hide()
+w.deleteLater()
+app.quit()
