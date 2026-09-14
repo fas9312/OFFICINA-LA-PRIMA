@@ -46,29 +46,35 @@ jobs:
 
       - name: Build Windows EXE
         shell: powershell
-        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager_0_1_1" --add-data "v0_1/assets;assets" --paths "v0_1" v0_1/main_011.py
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager_0_1_2" --add-data "v0_1/assets;assets" --paths "v0_1" v0_1/main_011.py
 
       - name: Package
         shell: powershell
         run: |
           New-Item -ItemType Directory -Force -Path release | Out-Null
-          Copy-Item dist\LA_PRIMA_Garage_Manager_0_1_1.exe release\LA_PRIMA_Garage_Manager_0_1_1.exe
-          Copy-Item smoke_011.png release\VERIFICA_GRAFICA_0_1_1.png
+          Copy-Item dist\LA_PRIMA_Garage_Manager_0_1_2.exe release\LA_PRIMA_Garage_Manager_0_1_2.exe
+          Copy-Item smoke_011.png release\VERIFICA_GRAFICA_0_1_2.png
           @"
-          OFFICINA LA PRIMA - Garage Manager 0.1.1
+          OFFICINA LA PRIMA - Garage Manager 0.1.2
 
-          HOTFIX VERIFICATA:
-          - logo incorporato come Qt Resource: nessuna dipendenza dal percorso Windows
-          - build bloccata automaticamente se il logo non viene caricato
-          - logo nella sidebar e logo grande nel background della dashboard
-          - pannelli della Home resi piu trasparenti
-          - scrollbar verticale mantenuta
-          - ripristinata stampa PDF del singolo cliente
-          - ripristinata stampa PDF del singolo veicolo
-          - ripristinata stampa PDF della singola commessa
-          - ripristinata stampa PDF del singolo appuntamento
-          - stampa singolo tagliando e singolo preventivo mantenute
-          - aggiunta stampa singola fattura e fornitore
+          NOVITA PRINCIPALE: SFONDO SELEZIONABILE COME UNA SKIN
+          - Impostazioni > Sfondo Dashboard > Scegli immagine
+          - supporto PNG / JPG / JPEG / BMP / WEBP
+          - l'immagine scelta viene copiata in Documenti\LA_PRIMA_Garage_Manager_01\Backgrounds
+          - lo sfondo resta disponibile ai riavvii anche se il file originale viene spostato
+          - cursore Intensita sfondo 15%-100%
+          - pulsante Ripristina logo LA PRIMA
+          - cambio sfondo applicato immediatamente
+
+          RESTANO PRESENTI:
+          - scrollbar Dashboard
+          - clienti e veicoli con stampa PDF singola
+          - commesse e appuntamenti con stampa PDF singola
+          - tagliandi e preventivi con stampa PDF singola
+          - fatture e fornitori con stampa PDF singola
+          - stampe situazione PDF
+          - marca/modello auto da database locale
+          - preventivi a voci
 
           Dati: Documenti\LA_PRIMA_Garage_Manager_01
           "@ | Set-Content release\LEGGIMI.txt
@@ -76,6 +82,6 @@ jobs:
       - name: Upload Windows build
         uses: actions/upload-artifact@v4
         with:
-          name: LA_PRIMA_Garage_Manager_Windows_0_1_1
+          name: LA_PRIMA_Garage_Manager_Windows_0_1_2
           path: release/*
           retention-days: 30
