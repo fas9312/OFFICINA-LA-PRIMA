@@ -1,0 +1,1 @@
+The official OFFICINA LA PRIMA logo is embedded as a Qt resource in the Windows build so it cannot disappear because of a filesystem path issue.
