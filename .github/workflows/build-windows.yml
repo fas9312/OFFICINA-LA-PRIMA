@@ -22,7 +22,7 @@ jobs:
 
       - name: Build Windows EXE
         shell: powershell
-        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager" --add-data "assets;assets" app_v5.py
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager" --add-data "assets;assets" app_v6.py
 
       - name: Package
         shell: powershell
@@ -30,12 +30,13 @@ jobs:
           New-Item -ItemType Directory -Force -Path release | Out-Null
           Copy-Item dist\LA_PRIMA_Garage_Manager.exe release\LA_PRIMA_Garage_Manager.exe
           @"
-          OFFICINA LA PRIMA - Garage Manager V5
-          - Database locale marche/modelli con selezione a tendina
-          - Preventivi con voci strutturate, quantita, prezzo unitario e totale automatico
-          - Stampa PDF del singolo preventivo
-          - Calendario con testo adattato alle celle e pulsanti mese/Oggi realmente attivi
-          - Dashboard con logo background e scrollbar verticale
+          OFFICINA LA PRIMA - Garage Manager V6
+          CORREZIONE GRAFICA DEDICATA:
+          - logo ufficiale LA PRIMA visibile nella sidebar
+          - logo ufficiale LA PRIMA realmente usato come background della Home
+          - pannelli sovrapposti semitrasparenti
+          - scrollbar e funzioni V5 mantenute
+          Nessuna modifica funzionale rispetto alla V5.
           Avvia LA_PRIMA_Garage_Manager.exe.
           Database, PDF e backup vengono salvati in Documenti\LA_PRIMA_Garage_Manager.
           "@ | Set-Content release\LEGGIMI.txt
@@ -43,6 +44,6 @@ jobs:
       - name: Upload Windows build
         uses: actions/upload-artifact@v4
         with:
-          name: LA_PRIMA_Garage_Manager_Windows_V5
+          name: LA_PRIMA_Garage_Manager_Windows_V6
           path: release/*
           retention-days: 30
