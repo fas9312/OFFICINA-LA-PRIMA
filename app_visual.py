@@ -6,8 +6,10 @@ from PIL import Image, ImageTk, ImageDraw
 
 from app import App as BaseApp, BG, NAVY, RED, TEXT, MUTED, BLUE, GREEN, ORANGE, RES_DIR
 
-BG_IMG = RES_DIR/'assets'/'la_prima_bg.jpg'
+# La grafica V3 usa il logo reale dell'officina come sfondo/watermark.
+# Nessuna immagine generata: usiamo esclusivamente l'asset ufficiale già incluso.
 LOGO_IMG = RES_DIR/'assets'/'la_prima_logo.png'
+BG_IMG = LOGO_IMG
 
 class App(BaseApp):
     def _load_assets(self):
@@ -15,7 +17,8 @@ class App(BaseApp):
         try:self.bg_src=Image.open(BG_IMG).convert('RGB')
         except:pass
         try:
-            im=Image.open(LOGO_IMG).convert('RGBA'); im.thumbnail((260,115),Image.LANCZOS); self.logo_tk=ImageTk.PhotoImage(im)
+            im=Image.open(LOGO_IMG).convert('RGBA')
+            im.thumbnail((255,120),Image.LANCZOS); self.logo_tk=ImageTk.PhotoImage(im)
         except:pass
 
     def _shell(self):
@@ -26,7 +29,7 @@ class App(BaseApp):
         else:
             tk.Label(brand,text='OFFICINA\n“LA PRIMA”',bg='#152536',fg='white',font=('Segoe UI Black',24)).pack(pady=28)
         self.nav_buttons={}
-        items=[('⌂','Dashboard',self.dashboard),('👥','Clienti',self.clients),('🚗','Veicoli',self.vehicles),('🔧','Commesse',self.jobs),('▣','Appuntamenti',self.appointments),('⚙','Tagliandi',self.services),('▤','Preventivi',self.quotes),('▦','Magazzino',self.inventory),('▣','Fornitori',self.suppliers),('◷','Scadenze',self.deadlines),('▥','Report',self.report),('◉','Backup',self.backup)]
+        items=[('⌂','Dashboard',self.dashboard),('👥','Clienti',self.clients),('🚗','Veicoli',self.vehicles),('🔧','Commesse',self.jobs),('▣','Appuntamenti',self.appointments),('⚙','Tagliandi',self.services),('▤','Preventivi',self.quotes),('▤','Fatture',self._fatture),('▦','Magazzino',self.inventory),('▣','Fornitori',self.suppliers),('◷','Scadenze',self.deadlines),('▥','Report',self.report),('◉','Backup',self.backup),('⚙','Impostazioni',self._impostazioni)]
         for icon,t,cmd in items:
             b=tk.Button(self.sidebar,text=f'{icon}   {t}',command=lambda n=t,c=cmd:self._go(n,c),anchor='w',bg='#152536',fg='white',activebackground=RED,activeforeground='white',relief='flat',padx=28,pady=10,font=('Segoe UI Semibold',11),cursor='hand2')
             b.pack(fill='x',padx=14,pady=1); self.nav_buttons[t]=b
@@ -39,37 +42,68 @@ class App(BaseApp):
         cmd()
 
     def wrap(self,title,sub=''):
-        self.clear(); self.set_bg();
-        w=tk.Frame(self.body,bg='#edf2f6'); w.place(relx=.018,rely=.018,relwidth=.964,relheight=.964)
-        h=tk.Frame(w,bg='#ffffff'); h.pack(fill='x',padx=22,pady=(18,10))
+        self.clear(); self.set_bg()
+        w=tk.Frame(self.body,bg='#f5f7f9',highlightthickness=0)
+        w.place(relx=.018,rely=.018,relwidth=.964,relheight=.964)
+        h=tk.Frame(w,bg='#ffffff')
+        h.pack(fill='x',padx=22,pady=(18,10))
         tk.Label(h,text=title,bg='white',fg=TEXT,font=('Segoe UI Semibold',25)).pack(anchor='w')
         tk.Label(h,text=sub,bg='white',fg=MUTED,font=('Segoe UI',10)).pack(anchor='w')
         return w
 
+    def set_bg(self):
+        c=tk.Canvas(self.body,highlightthickness=0,bg='#d4d9de')
+        c.place(relx=0,rely=0,relwidth=1,relheight=1)
+        try:
+            logo=Image.open(LOGO_IMG).convert('RGBA')
+        except Exception:
+            return
+        def draw(e=None):
+            w=max(1,c.winfo_width()); h=max(1,c.winfo_height())
+            base=Image.new('RGBA',(w,h),(191,199,205,255))
+            lm=logo.copy(); lm.thumbnail((int(w*.84),int(h*.68)),Image.LANCZOS)
+            alpha=lm.getchannel('A').point(lambda a: int(a*0.34)); lm.putalpha(alpha)
+            base.alpha_composite(lm,((w-lm.width)//2,(h-lm.height)//2))
+            veil=Image.new('RGBA',(w,h),(238,242,245,58)); base=Image.alpha_composite(base,veil)
+            c._im=ImageTk.PhotoImage(base)
+            c.delete('bg'); c.create_image(0,0,image=c._im,anchor='nw',tags='bg'); c.tag_lower('bg')
+        c.bind('<Configure>',draw)
+
+    def _fatture(self):
+        w=self.wrap('Fatture','Sezione predisposta per fatture e documenti fiscali.')
+        box=tk.Frame(w,bg='white',highlightbackground='#d7dee6',highlightthickness=1)
+        box.pack(fill='both',expand=True,padx=24,pady=(0,20))
+        tk.Label(box,text='Fatture',bg='white',fg=TEXT,font=('Segoe UI Semibold',20)).pack(pady=(45,8))
+        tk.Label(box,text='Modulo pronto per la prossima integrazione funzionale.',bg='white',fg=MUTED,font=('Segoe UI',11)).pack()
+
+    def _impostazioni(self):
+        w=self.wrap('Impostazioni','Configurazione generale del gestionale LA PRIMA.')
+        box=tk.Frame(w,bg='white',highlightbackground='#d7dee6',highlightthickness=1)
+        box.pack(fill='both',expand=True,padx=24,pady=(0,20))
+        tk.Label(box,text='Impostazioni',bg='white',fg=TEXT,font=('Segoe UI Semibold',20)).pack(pady=(45,8))
+        tk.Label(box,text='Configurazioni officina, stampa e preferenze saranno raccolte qui.',bg='white',fg=MUTED,font=('Segoe UI',11)).pack()
+
     def dashboard(self):
-        self.clear();
+        self.clear()
         for n,b in self.nav_buttons.items(): b.configure(bg=RED if n=='Dashboard' else '#152536')
         c=tk.Canvas(self.body,highlightthickness=0,bg='#dbe3e9'); c.pack(fill='both',expand=True)
         self._dash_canvas=c
         c.bind('<Configure>',self._paint_dashboard)
 
-    def _cover(self,src,w,h):
-        im=src.copy(); ir=im.width/im.height; wr=w/h
-        if ir>wr:
-            nw=int(im.height*wr); x=(im.width-nw)//2; im=im.crop((x,0,x+nw,im.height))
-        else:
-            nh=int(im.width/wr); y=(im.height-nh)//2; im=im.crop((0,y,im.width,y+nh))
-        return im.resize((w,h),Image.LANCZOS)
-
     def _paint_dashboard(self,event=None):
         c=self._dash_canvas; w=max(980,c.winfo_width()); h=max(760,c.winfo_height())
-        if self.bg_src: base=self._cover(self.bg_src,w,h).convert('RGBA')
-        else: base=Image.new('RGBA',(w,h),'#dbe3e9')
-        shade=Image.new('RGBA',(w,h),(7,18,28,55)); base=Image.alpha_composite(base,shade)
+        base=Image.new('RGBA',(w,h),(183,193,201,255))
+        try:
+            logo=Image.open(LOGO_IMG).convert('RGBA')
+            logo.thumbnail((int(w*.88),int(h*.72)),Image.LANCZOS)
+            a=logo.getchannel('A').point(lambda v:int(v*0.38)); logo.putalpha(a)
+            base.alpha_composite(logo,((w-logo.width)//2,(h-logo.height)//2))
+        except Exception:
+            pass
+        shade=Image.new('RGBA',(w,h),(224,231,236,62)); base=Image.alpha_composite(base,shade)
         draw=ImageDraw.Draw(base,'RGBA')
         def panel(x1,y1,x2,y2,alpha=218,r=15): draw.rounded_rectangle((x1,y1,x2,y2),radius=r,fill=(255,255,255,alpha),outline=(190,201,212,155),width=1)
-        pad=24
-        card_y=165; gap=14; usable=w-2*pad; card_w=(usable-3*gap)//4; card_h=105
+        pad=24; card_y=165; gap=14; usable=w-2*pad; card_w=(usable-3*gap)//4; card_h=105
         for i in range(4):
             x=pad+i*(card_w+gap); panel(x,card_y,x+card_w,card_y+card_h,220,14)
         cal_y=286; right_w=max(330,int(w*.30)); cal_w=w-3*pad-right_w; cal_h=455
