@@ -1,0 +1,1 @@
+UI logo asset is embedded through Qt resources from v0_1/assets/la_prima_logo.png. This file exists only to make the 0.1.1 visual fix commit explicit.
