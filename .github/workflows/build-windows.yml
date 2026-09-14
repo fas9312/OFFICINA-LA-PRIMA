@@ -30,13 +30,14 @@ jobs:
           New-Item -ItemType Directory -Force -Path release | Out-Null
           Copy-Item dist\LA_PRIMA_Garage_Manager.exe release\LA_PRIMA_Garage_Manager.exe
           @"
-          OFFICINA LA PRIMA - Garage Manager V6
-          CORREZIONE GRAFICA DEDICATA:
-          - logo ufficiale LA PRIMA visibile nella sidebar
-          - logo ufficiale LA PRIMA realmente usato come background della Home
-          - pannelli sovrapposti semitrasparenti
-          - scrollbar e funzioni V5 mantenute
-          Nessuna modifica funzionale rispetto alla V5.
+          OFFICINA LA PRIMA - Garage Manager V6.1
+          FIX GRAFICO DEDICATO:
+          - eliminato completamente il fallback base64 difettoso
+          - logo caricato direttamente dagli asset inclusi nell'EXE
+          - logo LA PRIMA visibile in alto a sinistra nella sidebar
+          - logo LA PRIMA grande e ben visibile come background della Home
+          - pannelli semitrasparenti sopra il logo
+          - tutte le funzioni V5 mantenute invariate
           Avvia LA_PRIMA_Garage_Manager.exe.
           Database, PDF e backup vengono salvati in Documenti\LA_PRIMA_Garage_Manager.
           "@ | Set-Content release\LEGGIMI.txt
@@ -44,6 +45,6 @@ jobs:
       - name: Upload Windows build
         uses: actions/upload-artifact@v4
         with:
-          name: LA_PRIMA_Garage_Manager_Windows_V6
+          name: LA_PRIMA_Garage_Manager_Windows_V6_1
           path: release/*
           retention-days: 30
