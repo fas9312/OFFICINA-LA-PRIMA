@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="/la_prima">
+    <file alias="logo.png">assets/la_prima_logo.png</file>
+  </qresource>
+</RCC>
