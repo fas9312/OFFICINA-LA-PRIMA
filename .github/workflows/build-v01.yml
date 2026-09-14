@@ -24,34 +24,51 @@ jobs:
       - name: Install dependencies
         run: python -m pip install --upgrade pip -r requirements-v01.txt
 
+      - name: Compile Qt logo resource
+        shell: powershell
+        run: pyside6-rcc v0_1\resources.qrc -o v0_1\resources_rc.py
+
+      - name: Verify embedded logo
+        shell: powershell
+        run: |
+          $env:QT_QPA_PLATFORM='offscreen'
+          python v0_1\verify_logo.py
+
       - name: Syntax check
         shell: powershell
-        run: python -m py_compile v0_1\core.py v0_1\car_catalog.py v0_1\dashboard_mixin.py v0_1\clients_vehicles_mixin.py v0_1\jobs_appointments_mixin.py v0_1\services_mixin.py v0_1\quotes_mixin.py v0_1\invoices_suppliers_mixin.py v0_1\inventory_deadlines_mixin.py v0_1\misc_mixin.py v0_1\main.py
+        run: python -m py_compile v0_1\core.py v0_1\car_catalog.py v0_1\dashboard_mixin.py v0_1\clients_vehicles_mixin.py v0_1\jobs_appointments_mixin.py v0_1\services_mixin.py v0_1\quotes_mixin.py v0_1\invoices_suppliers_mixin.py v0_1\inventory_deadlines_mixin.py v0_1\misc_mixin.py v0_1\main.py v0_1\main_011.py v0_1\smoke_011.py v0_1\resources_rc.py
+
+      - name: UI smoke test
+        shell: powershell
+        run: |
+          $env:QT_QPA_PLATFORM='offscreen'
+          python v0_1\smoke_011.py
 
       - name: Build Windows EXE
         shell: powershell
-        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager_0_1" --add-data "v0_1/assets;assets" --paths "v0_1" v0_1/main.py
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager_0_1_1" --add-data "v0_1/assets;assets" --paths "v0_1" v0_1/main_011.py
 
       - name: Package
         shell: powershell
         run: |
           New-Item -ItemType Directory -Force -Path release | Out-Null
-          Copy-Item dist\LA_PRIMA_Garage_Manager_0_1.exe release\LA_PRIMA_Garage_Manager_0_1.exe
+          Copy-Item dist\LA_PRIMA_Garage_Manager_0_1_1.exe release\LA_PRIMA_Garage_Manager_0_1_1.exe
+          Copy-Item smoke_011.png release\VERIFICA_GRAFICA_0_1_1.png
           @"
-          OFFICINA LA PRIMA - Garage Manager 0.1
+          OFFICINA LA PRIMA - Garage Manager 0.1.1
 
-          RISCRITTURA COMPLETA DA ZERO IN PYSIDE6/QT.
-          Nessuna eredita dalle precedenti V1-V6.
-          - logo ufficiale nella sidebar
-          - logo ufficiale come background reale della Home
-          - pannelli semitrasparenti sopra il background
-          - scrollbar verticale reale
-          - database SQLite separato 0.1
-          - clienti, veicoli, commesse, appuntamenti, tagliandi, preventivi,
-            fatture, magazzino, fornitori, scadenze, report, backup, impostazioni
-          - marca/modello auto con menu a tendina
-          - preventivi a voci e stampa PDF singola
-          - calendario operativo con mese precedente/successivo/Oggi e click sul giorno
+          HOTFIX VERIFICATA:
+          - logo incorporato come Qt Resource: nessuna dipendenza dal percorso Windows
+          - build bloccata automaticamente se il logo non viene caricato
+          - logo nella sidebar e logo grande nel background della dashboard
+          - pannelli della Home resi piu trasparenti
+          - scrollbar verticale mantenuta
+          - ripristinata stampa PDF del singolo cliente
+          - ripristinata stampa PDF del singolo veicolo
+          - ripristinata stampa PDF della singola commessa
+          - ripristinata stampa PDF del singolo appuntamento
+          - stampa singolo tagliando e singolo preventivo mantenute
+          - aggiunta stampa singola fattura e fornitore
 
           Dati: Documenti\LA_PRIMA_Garage_Manager_01
           "@ | Set-Content release\LEGGIMI.txt
@@ -59,6 +76,6 @@ jobs:
       - name: Upload Windows build
         uses: actions/upload-artifact@v4
         with:
-          name: LA_PRIMA_Garage_Manager_Windows_0_1
+          name: LA_PRIMA_Garage_Manager_Windows_0_1_1
           path: release/*
           retention-days: 30
