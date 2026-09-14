@@ -22,7 +22,7 @@ jobs:
 
       - name: Build Windows EXE
         shell: powershell
-        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager" --add-data "assets;assets" app_visual.py
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager" --add-data "assets;assets" app_v4.py
 
       - name: Package
         shell: powershell
@@ -30,15 +30,15 @@ jobs:
           New-Item -ItemType Directory -Force -Path release | Out-Null
           Copy-Item dist\LA_PRIMA_Garage_Manager.exe release\LA_PRIMA_Garage_Manager.exe
           @"
-          OFFICINA LA PRIMA - Garage Manager V3
+          OFFICINA LA PRIMA - Garage Manager V4
+          Dashboard con logo ufficiale LA PRIMA come background visibile, pannelli sovrapposti e scrollbar verticale reale.
           Avvia LA_PRIMA_Garage_Manager.exe.
-          Grafica V3: logo ufficiale LA PRIMA come sfondo in trasparenza, struttura gestionale in sovrimpressione e menu completo.
           Database, PDF e backup vengono salvati in Documenti\LA_PRIMA_Garage_Manager.
           "@ | Set-Content release\LEGGIMI.txt
 
       - name: Upload Windows build
         uses: actions/upload-artifact@v4
         with:
-          name: LA_PRIMA_Garage_Manager_Windows_V3
+          name: LA_PRIMA_Garage_Manager_Windows_V4
           path: release/*
           retention-days: 30
