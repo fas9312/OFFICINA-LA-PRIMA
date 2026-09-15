@@ -36,7 +36,7 @@ jobs:
 
       - name: Syntax check
         shell: powershell
-        run: python -m py_compile v0_1\core.py v0_1\db_selector.py v0_1\car_catalog.py v0_1\dashboard_mixin.py v0_1\clients_vehicles_mixin.py v0_1\jobs_appointments_mixin.py v0_1\services_mixin.py v0_1\quotes_mixin.py v0_1\invoices_suppliers_mixin.py v0_1\inventory_deadlines_mixin.py v0_1\misc_mixin.py v0_1\main.py v0_1\main_011.py v0_1\main_013.py v0_1\main_013_entry.py v0_1\main_014.py v0_1\main_015.py v0_1\fatturapa.py v0_1\main_016.py v0_1\fatturapa_017.py v0_1\main_017.py v0_1\main_017_entry.py v0_1\main_018.py v0_1\main_018_entry.py v0_1\main_019.py v0_1\main_019_entry.py v0_1\main_020.py v0_1\main_020_entry.py v0_1\main_021.py v0_1\main_021_entry.py v0_1\smoke_019.py v0_1\smoke_020.py v0_1\smoke_021.py v0_1\resources_rc.py
+        run: python -m py_compile v0_1\core.py v0_1\db_selector.py v0_1\car_catalog.py v0_1\dashboard_mixin.py v0_1\clients_vehicles_mixin.py v0_1\jobs_appointments_mixin.py v0_1\services_mixin.py v0_1\quotes_mixin.py v0_1\invoices_suppliers_mixin.py v0_1\inventory_deadlines_mixin.py v0_1\misc_mixin.py v0_1\main.py v0_1\main_011.py v0_1\main_013.py v0_1\main_013_entry.py v0_1\main_014.py v0_1\main_015.py v0_1\fatturapa.py v0_1\main_016.py v0_1\fatturapa_017.py v0_1\main_017.py v0_1\main_017_entry.py v0_1\main_018.py v0_1\main_018_entry.py v0_1\main_019.py v0_1\main_019_entry.py v0_1\main_020.py v0_1\main_020_entry.py v0_1\main_021.py v0_1\main_021_entry.py v0_1\main_021r.py v0_1\main_021r_entry.py v0_1\smoke_019.py v0_1\smoke_020.py v0_1\smoke_021.py v0_1\smoke_021r.py v0_1\resources_rc.py
 
       - name: Persona fisica FatturaPA smoke test
         shell: powershell
@@ -56,48 +56,54 @@ jobs:
           $env:QT_QPA_PLATFORM='offscreen'
           python v0_1\smoke_021.py
 
+      - name: Responsive layout smoke test
+        shell: powershell
+        run: |
+          $env:QT_QPA_PLATFORM='offscreen'
+          python v0_1\smoke_021r.py
+
       - name: Build Windows EXE
         shell: powershell
-        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager_0_1_11" --add-data "v0_1/assets;assets" --paths "v0_1" v0_1/main_021_entry.py
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager_0_1_11_RESPONSIVE" --add-data "v0_1/assets;assets" --paths "v0_1" v0_1/main_021r_entry.py
 
       - name: Package
         shell: powershell
         run: |
           New-Item -ItemType Directory -Force -Path release | Out-Null
-          Copy-Item dist\LA_PRIMA_Garage_Manager_0_1_11.exe release\LA_PRIMA_Garage_Manager_0_1_11.exe
+          Copy-Item dist\LA_PRIMA_Garage_Manager_0_1_11_RESPONSIVE.exe release\LA_PRIMA_Garage_Manager_0_1_11_RESPONSIVE.exe
           Copy-Item smoke_fatturapa_pf_019.xml release\ESEMPIO_FATTURAPA_PERSONA_FISICA.xml
           @"
-          OFFICINA LA PRIMA - Garage Manager 0.1.11
+          OFFICINA LA PRIMA - Garage Manager 0.1.11-R
 
-          RECUPERO PASSWORD OFFLINE
-          - nuovo pulsante Password dimenticata? nella schermata di accesso
-          - Impostazioni > Sicurezza e recupero password
-          - possibilita di impostare o cambiare un codice di recupero del gestionale
-          - il codice deve avere almeno 6 caratteri
-          - il codice di recupero viene salvato soltanto come hash nel database, non in chiaro
-          - dopo verifica del codice si puo impostare una nuova password per l'utente selezionato
-          - e possibile anche lasciare la nuova password vuota, mantenendo la modalita utente senza password
-          - se non esiste ancora un codice di recupero, dopo l'accesso il programma propone di configurarlo
-          - la modifica o eliminazione di un utente protetto da password richiede ora la password attuale; in caso di dimenticanza si usa il recupero
-          - tutto resta completamente offline, senza email e senza servizi cloud
+          FIX RESPONSIVE PER NOTEBOOK, SCHERMI PICCOLI E SCALING WINDOWS
+          - finestra principale dimensionata in base allo spazio realmente disponibile sul monitor
+          - eliminato il minimo fisso 1180x760 che poteva far uscire la finestra dallo schermo
+          - sidebar adattiva: larghezza, logo, pulsanti e caratteri cambiano in base allo spazio disponibile
+          - menu laterale scorrevole verticalmente: nessuna voce viene persa sui portatili
+          - toolbar delle sezioni a tabella su piu righe quando lo spazio orizzontale non basta
+          - tabelle con molte colonne passano a scorrimento orizzontale sui display compatti, evitando testi sovrapposti
+          - finestre di dialogo grandi (fatture, preventivi, ecc.) vengono automaticamente contenute nell'area utile dello schermo
+          - gestione DPI frazionaria Windows migliorata per 100%, 125%, 150% e scale intermedie
+          - layout desktop 27 pollici mantenuto ampio quando lo spazio lo consente
 
-          RESTA PRESENTE TUTTO IL RESTO DELLA 0.1.10
+          RESTA PRESENTE TUTTO IL RESTO DELLA 0.1.11
+          - recupero password offline
           - fatture con pagamento Contanti / Carta-POS / Bonifico
-          - preventivi con IVA per singola riga e totali imponibile/IVA/lordo
-          - tipo soggetto e regime fiscale selezionabili nei Dati Azienda
+          - preventivi con IVA per singola riga
+          - Dati Azienda e regime fiscale
           - FatturaPA / SDI, inclusa Persona fisica senza obbligo di P.IVA
           - login multiutente
           - database offline selezionabile anche da USB
           - logo e sfondo personalizzabile
           - calendario, tagliandi, PDF, magazzino, fornitori, backup e report
 
-          IMPORTANTE
-          Conservare il codice di recupero fuori dal PC, ad esempio su carta o in un password manager. Se si dimenticano sia la password sia il codice di recupero, il programma non dispone di un servizio email/cloud capace di recuperarli.
+          NOTA
+          Questa e una revisione responsive della 0.1.11. La successiva evoluzione funzionale del Magazzino e dei riepiloghi economici resta separata, cosi il fix grafico puo essere verificato subito anche sul portatile.
           "@ | Set-Content release\LEGGIMI.txt
 
       - name: Upload Windows build
         uses: actions/upload-artifact@v4
         with:
-          name: LA_PRIMA_Garage_Manager_Windows_0_1_11
+          name: LA_PRIMA_Garage_Manager_Windows_0_1_11_RESPONSIVE
           path: release/*
           retention-days: 30
