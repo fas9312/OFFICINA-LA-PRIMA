@@ -2,6 +2,7 @@ import sys
 from PySide6.QtWidgets import QApplication, QDialog
 
 import core
+from main_013 import ensure_schema_013
 from main_017 import AppWindow, UserLoginDialog, ensure_users_schema, ensure_fatturapa_schema, ensure_company_schema, APP_VERSION
 
 
@@ -9,6 +10,7 @@ def prepare_database():
     base=core.DB()
     try: base.conn.close()
     except Exception: pass
+    ensure_schema_013()
     ensure_fatturapa_schema()
     ensure_company_schema()
     ensure_users_schema()
