@@ -36,62 +36,57 @@ jobs:
 
       - name: Syntax check
         shell: powershell
-        run: python -m py_compile v0_1\core.py v0_1\db_selector.py v0_1\car_catalog.py v0_1\dashboard_mixin.py v0_1\clients_vehicles_mixin.py v0_1\jobs_appointments_mixin.py v0_1\services_mixin.py v0_1\quotes_mixin.py v0_1\invoices_suppliers_mixin.py v0_1\inventory_deadlines_mixin.py v0_1\misc_mixin.py v0_1\main.py v0_1\main_011.py v0_1\main_013.py v0_1\main_013_entry.py v0_1\main_014.py v0_1\main_015.py v0_1\fatturapa.py v0_1\main_016.py v0_1\main_016_entry.py v0_1\smoke_016.py v0_1\resources_rc.py
+        run: python -m py_compile v0_1\core.py v0_1\db_selector.py v0_1\car_catalog.py v0_1\dashboard_mixin.py v0_1\clients_vehicles_mixin.py v0_1\jobs_appointments_mixin.py v0_1\services_mixin.py v0_1\quotes_mixin.py v0_1\invoices_suppliers_mixin.py v0_1\inventory_deadlines_mixin.py v0_1\misc_mixin.py v0_1\main.py v0_1\main_011.py v0_1\main_013.py v0_1\main_013_entry.py v0_1\main_014.py v0_1\main_015.py v0_1\fatturapa.py v0_1\main_016.py v0_1\fatturapa_017.py v0_1\main_017.py v0_1\smoke_017.py v0_1\resources_rc.py
 
-      - name: FatturaPA and fiscal UI smoke test
+      - name: Data Azienda and FatturaPA smoke test
         shell: powershell
         run: |
           $env:QT_QPA_PLATFORM='offscreen'
-          python v0_1\smoke_016.py
+          python v0_1\smoke_017.py
 
       - name: Build Windows EXE
         shell: powershell
-        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager_0_1_6" --add-data "v0_1/assets;assets" --paths "v0_1" v0_1/main_016_entry.py
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager_0_1_7" --add-data "v0_1/assets;assets" --paths "v0_1" v0_1/main_017.py
 
       - name: Package
         shell: powershell
         run: |
           New-Item -ItemType Directory -Force -Path release | Out-Null
-          Copy-Item dist\LA_PRIMA_Garage_Manager_0_1_6.exe release\LA_PRIMA_Garage_Manager_0_1_6.exe
-          Copy-Item smoke_016.png release\VERIFICA_GRAFICA_0_1_6.png
-          Copy-Item smoke_fatturapa.xml release\ESEMPIO_FATTURAPA_TEST.xml
+          Copy-Item dist\LA_PRIMA_Garage_Manager_0_1_7.exe release\LA_PRIMA_Garage_Manager_0_1_7.exe
+          Copy-Item smoke_017.png release\VERIFICA_GRAFICA_0_1_7.png
+          Copy-Item smoke_fatturapa_017.xml release\ESEMPIO_FATTURAPA_TEST.xml
           @"
-          OFFICINA LA PRIMA - Garage Manager 0.1.6
+          OFFICINA LA PRIMA - Garage Manager 0.1.7
 
-          NOVITA 0.1.6 - FATTURAPA / SDI
-          - Impostazioni > FatturaPA / Sistema di Interscambio
-          - campi fiscali officina: ragione sociale, P.IVA, CF, regime fiscale, indirizzo, CAP, comune, provincia, nazione, email, telefono
-          - anagrafica cliente ampliata con P.IVA, CF, indirizzo fiscale, codice destinatario, PEC e scelta FPR12/FPA12
-          - Fatture > Dati FatturaPA per tipo documento TD01/TD04/TD05/TD24/TD25 e codici Natura per righe IVA 0%
-          - Fatture > Esporta FatturaPA/SDI genera XML nel tracciato FatturaElettronica
-          - supporto FPR12 per privati/imprese e FPA12 per Pubblica Amministrazione
-          - generazione DatiTrasmissione, CedentePrestatore, CessionarioCommittente, DatiGeneraliDocumento, DettaglioLinee e DatiRiepilogo IVA
-          - controllo preventivo dei dati obbligatori: se mancano P.IVA/CF, CAP, comune, provincia, codice SDI o Natura, l'esportazione viene bloccata con elenco errori
-          - nome file proposto nel formato IT<PartitaIVA>_<Progressivo>.xml
-          - nessun invio automatico allo SDI: il file resta offline e puo essere consegnato al commercialista o caricato su un canale abilitato
-          - per FPA12 il programma ricorda che e necessaria la firma digitale prima della trasmissione
+          NOVITA 0.1.7
+          - Impostazioni > Dati Azienda: sezione unica per compilare i dati fiscali necessari alla generazione FatturaPA
+          - ragione sociale, P.IVA, CF, regime fiscale, sede, CAP, comune, provincia, nazione, telefono, email e PEC
+          - dati REA opzionali: ufficio, numero REA, capitale sociale, socio unico/plurimo, stato liquidazione
+          - IBAN, banca, condizioni e modalita di pagamento predefinite
+          - Fatture > Dati FatturaPA: tipo documento, pagamento, scadenza, IBAN, bollo virtuale e Natura IVA
+          - XML FatturaPA con DatiTrasmissione, CedentePrestatore, CessionarioCommittente, DatiGeneraliDocumento, DatiBeniServizi, riepiloghi IVA e DatiPagamento
+          - XML salvabile offline e predisposto per caricamento manuale nei canali Agenzia delle Entrate / SDI o consegna al commercialista
+          - controllo campi obbligatori prima dell'esportazione
+          - logo sidebar: rimosse le scritte separate; l'intero logo ufficiale con bandiere viene mostrato su riquadro gradiente bianco-grigio
 
           RESTANO PRESENTI
           - login multiutente con password facoltativa
-          - selezione database offline da Impostazioni
-          - database esterno su USB o disco esterno
-          - logo sidebar leggibile e sfondo Dashboard selezionabile
+          - selezione database offline anche da USB
+          - sfondo Dashboard selezionabile
           - fatture a righe con IVA e calcoli automatici
-          - XML gestionale precedente, separato dal nuovo XML FatturaPA
-          - tagliandi Programmati visibili automaticamente nel calendario Home
-          - PDF singoli e stampe riepilogative
+          - XML gestionale separato
+          - tagliandi programmati nel calendario
+          - PDF singoli e riepilogativi
           - preventivi a voci
           - marca/modello auto da database locale
 
           IMPORTANTE
-          Prima del primo utilizzo fiscale reale, compilare i dati fiscali esatti dell'officina e far verificare la configurazione al commercialista. Il gestionale genera il file XML ma non effettua firma digitale, invio allo SDI o conservazione sostitutiva.
-
-          Database predefinito: Documenti\LA_PRIMA_Garage_Manager_01\la_prima_01.db
+          Il programma genera il file XML e non lo invia automaticamente allo SDI. Prima del primo utilizzo fiscale reale, verificare con il commercialista i dati aziendali, il regime fiscale, i codici Natura e il primo file generato. L'accettazione finale resta soggetta ai controlli del Sistema di Interscambio.
           "@ | Set-Content release\LEGGIMI.txt
 
       - name: Upload Windows build
         uses: actions/upload-artifact@v4
         with:
-          name: LA_PRIMA_Garage_Manager_Windows_0_1_6
+          name: LA_PRIMA_Garage_Manager_Windows_0_1_7
           path: release/*
           retention-days: 30
