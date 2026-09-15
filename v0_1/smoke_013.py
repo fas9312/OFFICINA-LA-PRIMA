@@ -2,9 +2,8 @@ import os
 os.environ['QT_QPA_PLATFORM']='offscreen'
 
 from PySide6.QtWidgets import QApplication, QLabel
-from main_013 import AppWindow, ensure_schema_013
+from main_013_entry import AppWindow
 
-ensure_schema_013()
 app=QApplication([])
 w=AppWindow(); w.resize(1536,960); w.show(); app.processEvents()
 
