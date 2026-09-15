@@ -36,48 +36,48 @@ jobs:
 
       - name: Syntax check
         shell: powershell
-        run: python -m py_compile v0_1\core.py v0_1\db_selector.py v0_1\car_catalog.py v0_1\dashboard_mixin.py v0_1\clients_vehicles_mixin.py v0_1\jobs_appointments_mixin.py v0_1\services_mixin.py v0_1\quotes_mixin.py v0_1\invoices_suppliers_mixin.py v0_1\inventory_deadlines_mixin.py v0_1\misc_mixin.py v0_1\main.py v0_1\main_011.py v0_1\main_013.py v0_1\main_013_entry.py v0_1\main_014.py v0_1\smoke_014.py v0_1\resources_rc.py
+        run: python -m py_compile v0_1\core.py v0_1\db_selector.py v0_1\car_catalog.py v0_1\dashboard_mixin.py v0_1\clients_vehicles_mixin.py v0_1\jobs_appointments_mixin.py v0_1\services_mixin.py v0_1\quotes_mixin.py v0_1\invoices_suppliers_mixin.py v0_1\inventory_deadlines_mixin.py v0_1\misc_mixin.py v0_1\main.py v0_1\main_011.py v0_1\main_013.py v0_1\main_013_entry.py v0_1\main_014.py v0_1\main_015.py v0_1\smoke_015.py v0_1\resources_rc.py
 
-      - name: UI and database selector smoke test
+      - name: UI users and XML smoke test
         shell: powershell
         run: |
           $env:QT_QPA_PLATFORM='offscreen'
-          python v0_1\smoke_014.py
+          python v0_1\smoke_015.py
 
       - name: Build Windows EXE
         shell: powershell
-        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager_0_1_4" --add-data "v0_1/assets;assets" --paths "v0_1" v0_1/main_014.py
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager_0_1_5" --add-data "v0_1/assets;assets" --paths "v0_1" v0_1/main_015.py
 
       - name: Package
         shell: powershell
         run: |
           New-Item -ItemType Directory -Force -Path release | Out-Null
-          Copy-Item dist\LA_PRIMA_Garage_Manager_0_1_4.exe release\LA_PRIMA_Garage_Manager_0_1_4.exe
-          Copy-Item smoke_014.png release\VERIFICA_GRAFICA_0_1_4.png
+          Copy-Item dist\LA_PRIMA_Garage_Manager_0_1_5.exe release\LA_PRIMA_Garage_Manager_0_1_5.exe
+          Copy-Item smoke_015.png release\VERIFICA_GRAFICA_0_1_5.png
           @"
-          OFFICINA LA PRIMA - Garage Manager 0.1.4
+          OFFICINA LA PRIMA - Garage Manager 0.1.5
 
-          NOVITA 0.1.4
-          - Impostazioni > Database offline
-          - pulsante Scegli database per caricare un database LA PRIMA esistente
-          - supporto database nei Documenti, su disco esterno o su pennetta USB
-          - il file viene usato direttamente nella posizione scelta, senza copiarlo
-          - verifica integrita SQLite e controllo delle tabelle LA PRIMA prima del caricamento
-          - percorso del database attivo sempre visibile nelle Impostazioni
-          - pulsante Usa database predefinito per tornare a Documenti\LA_PRIMA_Garage_Manager_01\la_prima_01.db
-          - possibilita di riavviare subito il programma dopo la scelta del database
-          - se un database esterno non e disponibile all'avvio, il programma apre il predefinito e mostra un avviso
+          NOVITA 0.1.5
+          - scritte OFFICINA / LA PRIMA sovrapposte direttamente al logo sidebar in bianco e rosso
+          - login con scelta utente all'avvio
+          - creazione, modifica ed eliminazione utenti direttamente dalla schermata login
+          - password facoltativa: ogni utente puo funzionare anche senza password
+          - almeno un utente deve sempre rimanere
+          - nome utente attivo visibile nel titolo del programma
+          - Fatture: nuovo pulsante Esporta XML
+          - XML strutturato con dati documento, cliente, veicolo, righe, aliquote IVA, imponibile, IVA, lordo e operatore
+          - salvataggio XML nella cartella scelta dall'utente, con proposta predefinita vicino al database
+          - l'XML e gestionale per il commercialista; non e un file FatturaPA firmato o inviato allo SDI
 
           RESTANO PRESENTI
-          - logo sidebar leggibile
+          - selezione database offline da Impostazioni
+          - database esterno su USB o disco esterno
           - sfondo Dashboard selezionabile come una skin
           - fatture a righe con IVA e calcoli automatici
           - tagliandi Programmati visibili automaticamente nel calendario Home
-          - scrollbar Dashboard
-          - stampa PDF singola per clienti, veicoli, commesse, appuntamenti, tagliandi, preventivi, fatture e fornitori
-          - stampe situazione PDF
-          - marca/modello auto da database locale
+          - PDF singoli e stampe riepilogative
           - preventivi a voci
+          - marca/modello auto da database locale
 
           Database predefinito: Documenti\LA_PRIMA_Garage_Manager_01\la_prima_01.db
           "@ | Set-Content release\LEGGIMI.txt
@@ -85,6 +85,6 @@ jobs:
       - name: Upload Windows build
         uses: actions/upload-artifact@v4
         with:
-          name: LA_PRIMA_Garage_Manager_Windows_0_1_4
+          name: LA_PRIMA_Garage_Manager_Windows_0_1_5
           path: release/*
           retention-days: 30
