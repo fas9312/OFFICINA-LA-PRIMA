@@ -36,42 +36,42 @@ jobs:
 
       - name: Syntax check
         shell: powershell
-        run: python -m py_compile v0_1\core.py v0_1\car_catalog.py v0_1\dashboard_mixin.py v0_1\clients_vehicles_mixin.py v0_1\jobs_appointments_mixin.py v0_1\services_mixin.py v0_1\quotes_mixin.py v0_1\invoices_suppliers_mixin.py v0_1\inventory_deadlines_mixin.py v0_1\misc_mixin.py v0_1\main.py v0_1\main_011.py v0_1\smoke_011.py v0_1\resources_rc.py
+        run: python -m py_compile v0_1\core.py v0_1\car_catalog.py v0_1\dashboard_mixin.py v0_1\clients_vehicles_mixin.py v0_1\jobs_appointments_mixin.py v0_1\services_mixin.py v0_1\quotes_mixin.py v0_1\invoices_suppliers_mixin.py v0_1\inventory_deadlines_mixin.py v0_1\misc_mixin.py v0_1\main.py v0_1\main_011.py v0_1\main_013.py v0_1\smoke_013.py v0_1\resources_rc.py
 
-      - name: UI smoke test
+      - name: UI and schema smoke test
         shell: powershell
         run: |
           $env:QT_QPA_PLATFORM='offscreen'
-          python v0_1\smoke_011.py
+          python v0_1\smoke_013.py
 
       - name: Build Windows EXE
         shell: powershell
-        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager_0_1_2" --add-data "v0_1/assets;assets" --paths "v0_1" v0_1/main_011.py
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager_0_1_3" --add-data "v0_1/assets;assets" --paths "v0_1" v0_1/main_013.py
 
       - name: Package
         shell: powershell
         run: |
           New-Item -ItemType Directory -Force -Path release | Out-Null
-          Copy-Item dist\LA_PRIMA_Garage_Manager_0_1_2.exe release\LA_PRIMA_Garage_Manager_0_1_2.exe
-          Copy-Item smoke_011.png release\VERIFICA_GRAFICA_0_1_2.png
+          Copy-Item dist\LA_PRIMA_Garage_Manager_0_1_3.exe release\LA_PRIMA_Garage_Manager_0_1_3.exe
+          Copy-Item smoke_013.png release\VERIFICA_GRAFICA_0_1_3.png
           @"
-          OFFICINA LA PRIMA - Garage Manager 0.1.2
+          OFFICINA LA PRIMA - Garage Manager 0.1.3
 
-          NOVITA PRINCIPALE: SFONDO SELEZIONABILE COME UNA SKIN
-          - Impostazioni > Sfondo Dashboard > Scegli immagine
-          - supporto PNG / JPG / JPEG / BMP / WEBP
-          - l'immagine scelta viene copiata in Documenti\LA_PRIMA_Garage_Manager_01\Backgrounds
-          - lo sfondo resta disponibile ai riavvii anche se il file originale viene spostato
-          - cursore Intensita sfondo 15%-100%
-          - pulsante Ripristina logo LA PRIMA
-          - cambio sfondo applicato immediatamente
+          NOVITA 0.1.3
+          - logo sidebar con scritte OFFICINA / LA PRIMA sempre leggibili
+          - fatture a righe: descrizione, quantita, prezzo netto, IVA %, imponibile, IVA, lordo
+          - calcolo automatico imponibile, IVA totale e totale lordo
+          - PDF fattura dettagliato con tutte le righe e i riepiloghi fiscali
+          - tagliandi con stato Programmato / Eseguito e ora
+          - i tagliandi Programmati compaiono automaticamente nel calendario Home
+          - nessuna duplicazione nella sezione Appuntamenti
+          - i km vettura si aggiornano solo quando il tagliando viene marcato Eseguito
 
-          RESTANO PRESENTI:
+          RESTANO PRESENTI
+          - sfondo Dashboard selezionabile come una skin
+          - intensita sfondo regolabile
           - scrollbar Dashboard
-          - clienti e veicoli con stampa PDF singola
-          - commesse e appuntamenti con stampa PDF singola
-          - tagliandi e preventivi con stampa PDF singola
-          - fatture e fornitori con stampa PDF singola
+          - stampa PDF singola per clienti, veicoli, commesse, appuntamenti, tagliandi, preventivi, fatture e fornitori
           - stampe situazione PDF
           - marca/modello auto da database locale
           - preventivi a voci
@@ -82,6 +82,6 @@ jobs:
       - name: Upload Windows build
         uses: actions/upload-artifact@v4
         with:
-          name: LA_PRIMA_Garage_Manager_Windows_0_1_2
+          name: LA_PRIMA_Garage_Manager_Windows_0_1_3
           path: release/*
           retention-days: 30
