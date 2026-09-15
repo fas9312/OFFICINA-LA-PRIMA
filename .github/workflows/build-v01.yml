@@ -36,57 +36,56 @@ jobs:
 
       - name: Syntax check
         shell: powershell
-        run: python -m py_compile v0_1\core.py v0_1\db_selector.py v0_1\car_catalog.py v0_1\dashboard_mixin.py v0_1\clients_vehicles_mixin.py v0_1\jobs_appointments_mixin.py v0_1\services_mixin.py v0_1\quotes_mixin.py v0_1\invoices_suppliers_mixin.py v0_1\inventory_deadlines_mixin.py v0_1\misc_mixin.py v0_1\main.py v0_1\main_011.py v0_1\main_013.py v0_1\main_013_entry.py v0_1\main_014.py v0_1\main_015.py v0_1\fatturapa.py v0_1\main_016.py v0_1\fatturapa_017.py v0_1\main_017.py v0_1\main_017_entry.py v0_1\smoke_017.py v0_1\resources_rc.py
+        run: python -m py_compile v0_1\core.py v0_1\db_selector.py v0_1\car_catalog.py v0_1\dashboard_mixin.py v0_1\clients_vehicles_mixin.py v0_1\jobs_appointments_mixin.py v0_1\services_mixin.py v0_1\quotes_mixin.py v0_1\invoices_suppliers_mixin.py v0_1\inventory_deadlines_mixin.py v0_1\misc_mixin.py v0_1\main.py v0_1\main_011.py v0_1\main_013.py v0_1\main_013_entry.py v0_1\main_014.py v0_1\main_015.py v0_1\fatturapa.py v0_1\main_016.py v0_1\fatturapa_017.py v0_1\main_017.py v0_1\main_017_entry.py v0_1\main_018.py v0_1\main_018_entry.py v0_1\smoke_018.py v0_1\resources_rc.py
 
-      - name: Data Azienda and FatturaPA smoke test
+      - name: Dati Azienda sidebar smoke test
         shell: powershell
         run: |
           $env:QT_QPA_PLATFORM='offscreen'
-          python v0_1\smoke_017.py
+          python v0_1\smoke_018.py
 
       - name: Build Windows EXE
         shell: powershell
-        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager_0_1_7" --add-data "v0_1/assets;assets" --paths "v0_1" v0_1/main_017_entry.py
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager_0_1_8" --add-data "v0_1/assets;assets" --paths "v0_1" v0_1/main_018_entry.py
 
       - name: Package
         shell: powershell
         run: |
           New-Item -ItemType Directory -Force -Path release | Out-Null
-          Copy-Item dist\LA_PRIMA_Garage_Manager_0_1_7.exe release\LA_PRIMA_Garage_Manager_0_1_7.exe
-          Copy-Item smoke_017.png release\VERIFICA_GRAFICA_0_1_7.png
-          Copy-Item smoke_fatturapa_017.xml release\ESEMPIO_FATTURAPA_TEST.xml
+          Copy-Item dist\LA_PRIMA_Garage_Manager_0_1_8.exe release\LA_PRIMA_Garage_Manager_0_1_8.exe
+          Copy-Item smoke_018.png release\VERIFICA_DATI_AZIENDA_0_1_8.png
           @"
-          OFFICINA LA PRIMA - Garage Manager 0.1.7
+          OFFICINA LA PRIMA - Garage Manager 0.1.8
 
-          NOVITA 0.1.7
-          - Impostazioni > Dati Azienda: sezione unica per compilare i dati fiscali necessari alla generazione FatturaPA
-          - ragione sociale, P.IVA, CF, regime fiscale, sede, CAP, comune, provincia, nazione, telefono, email e PEC
-          - dati REA opzionali: ufficio, numero REA, capitale sociale, socio unico/plurimo, stato liquidazione
-          - IBAN, banca, condizioni e modalita di pagamento predefinite
-          - Fatture > Dati FatturaPA: tipo documento, pagamento, scadenza, IBAN, bollo virtuale e Natura IVA
-          - XML FatturaPA con DatiTrasmissione, CedentePrestatore, CessionarioCommittente, DatiGeneraliDocumento, DatiBeniServizi, riepiloghi IVA e DatiPagamento
-          - XML salvabile offline e predisposto per caricamento manuale nei canali Agenzia delle Entrate / SDI o consegna al commercialista
-          - controllo campi obbligatori prima dell'esportazione
-          - logo sidebar: rimosse le scritte separate; l'intero logo ufficiale con bandiere viene mostrato su riquadro gradiente bianco-grigio
+          NOVITA 0.1.8
+          - Dati Azienda rimosso dalla pagina Impostazioni
+          - nuova voce Dati Azienda nel menu laterale, subito sotto Impostazioni
+          - pagina dedicata e scrollabile con campi realmente compilabili
+          - pulsante Salva Dati Azienda salva i valori nel database attualmente in uso
+          - pulsante Verifica dati obbligatori controlla i campi base necessari a FatturaPA
+          - campi aziendali: ragione sociale, P.IVA, CF, regime fiscale, indirizzo, civico, CAP, comune, provincia, nazione, telefono, email e PEC
+          - dati REA opzionali: ufficio, numero, capitale sociale, assetto societario e stato liquidazione
+          - pagamenti predefiniti: IBAN, banca, condizioni e modalita di pagamento
+          - i dati salvati vengono riutilizzati automaticamente dall'esportazione XML FatturaPA/SDI
 
           RESTANO PRESENTI
+          - XML FatturaPA / SDI
           - login multiutente con password facoltativa
           - selezione database offline anche da USB
+          - logo completo su gradiente bianco-grigio
           - sfondo Dashboard selezionabile
           - fatture a righe con IVA e calcoli automatici
-          - XML gestionale separato
           - tagliandi programmati nel calendario
           - PDF singoli e riepilogativi
           - preventivi a voci
-          - marca/modello auto da database locale
 
           IMPORTANTE
-          Il programma genera il file XML e non lo invia automaticamente allo SDI. Prima del primo utilizzo fiscale reale, verificare con il commercialista i dati aziendali, il regime fiscale, i codici Natura e il primo file generato. L'accettazione finale resta soggetta ai controlli del Sistema di Interscambio.
+          Il programma genera il file XML ma non lo invia automaticamente allo SDI. Prima del primo utilizzo fiscale reale, verificare il primo XML con il commercialista o con i controlli disponibili sul portale dell'Agenzia delle Entrate.
           "@ | Set-Content release\LEGGIMI.txt
 
       - name: Upload Windows build
         uses: actions/upload-artifact@v4
         with:
-          name: LA_PRIMA_Garage_Manager_Windows_0_1_7
+          name: LA_PRIMA_Garage_Manager_Windows_0_1_8
           path: release/*
           retention-days: 30
