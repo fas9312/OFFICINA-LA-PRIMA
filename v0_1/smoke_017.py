@@ -4,6 +4,7 @@ from pathlib import Path
 from PySide6.QtWidgets import QApplication, QLabel
 
 import core
+from main_013 import ensure_schema_013
 from main_017 import AppWindow, ensure_company_schema
 from main_016 import ensure_fatturapa_schema, ensure_users_schema
 from fatturapa_017 import write_xml
@@ -11,7 +12,7 @@ from fatturapa_017 import write_xml
 base=core.DB()
 try: base.conn.close()
 except Exception: pass
-ensure_fatturapa_schema(); ensure_company_schema(); ensure_users_schema()
+ensure_schema_013(); ensure_fatturapa_schema(); ensure_company_schema(); ensure_users_schema()
 
 app=QApplication([])
 w=AppWindow({'id':1,'name':'Test'}); w.show_settings(); w.show(); app.processEvents()
