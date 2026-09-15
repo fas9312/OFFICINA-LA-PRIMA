@@ -36,7 +36,7 @@ jobs:
 
       - name: Syntax check
         shell: powershell
-        run: python -m py_compile v0_1\core.py v0_1\db_selector.py v0_1\car_catalog.py v0_1\dashboard_mixin.py v0_1\clients_vehicles_mixin.py v0_1\jobs_appointments_mixin.py v0_1\services_mixin.py v0_1\quotes_mixin.py v0_1\invoices_suppliers_mixin.py v0_1\inventory_deadlines_mixin.py v0_1\misc_mixin.py v0_1\main.py v0_1\main_011.py v0_1\main_013.py v0_1\main_013_entry.py v0_1\main_014.py v0_1\main_015.py v0_1\fatturapa.py v0_1\main_016.py v0_1\fatturapa_017.py v0_1\main_017.py v0_1\main_017_entry.py v0_1\main_018.py v0_1\main_018_entry.py v0_1\main_019.py v0_1\main_019_entry.py v0_1\smoke_019.py v0_1\resources_rc.py
+        run: python -m py_compile v0_1\core.py v0_1\db_selector.py v0_1\car_catalog.py v0_1\dashboard_mixin.py v0_1\clients_vehicles_mixin.py v0_1\jobs_appointments_mixin.py v0_1\services_mixin.py v0_1\quotes_mixin.py v0_1\invoices_suppliers_mixin.py v0_1\inventory_deadlines_mixin.py v0_1\misc_mixin.py v0_1\main.py v0_1\main_011.py v0_1\main_013.py v0_1\main_013_entry.py v0_1\main_014.py v0_1\main_015.py v0_1\fatturapa.py v0_1\main_016.py v0_1\fatturapa_017.py v0_1\main_017.py v0_1\main_017_entry.py v0_1\main_018.py v0_1\main_018_entry.py v0_1\main_019.py v0_1\main_019_entry.py v0_1\main_020.py v0_1\main_020_entry.py v0_1\smoke_019.py v0_1\smoke_020.py v0_1\resources_rc.py
 
       - name: Persona fisica FatturaPA smoke test
         shell: powershell
@@ -44,48 +44,57 @@ jobs:
           $env:QT_QPA_PLATFORM='offscreen'
           python v0_1\smoke_019.py
 
+      - name: Final features smoke test
+        shell: powershell
+        run: |
+          $env:QT_QPA_PLATFORM='offscreen'
+          python v0_1\smoke_020.py
+
       - name: Build Windows EXE
         shell: powershell
-        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager_0_1_9" --add-data "v0_1/assets;assets" --paths "v0_1" v0_1/main_019_entry.py
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager_0_1_10" --add-data "v0_1/assets;assets" --paths "v0_1" v0_1/main_020_entry.py
 
       - name: Package
         shell: powershell
         run: |
           New-Item -ItemType Directory -Force -Path release | Out-Null
-          Copy-Item dist\LA_PRIMA_Garage_Manager_0_1_9.exe release\LA_PRIMA_Garage_Manager_0_1_9.exe
+          Copy-Item dist\LA_PRIMA_Garage_Manager_0_1_10.exe release\LA_PRIMA_Garage_Manager_0_1_10.exe
           Copy-Item smoke_fatturapa_pf_019.xml release\ESEMPIO_FATTURAPA_PERSONA_FISICA.xml
           @"
-          OFFICINA LA PRIMA - Garage Manager 0.1.9
+          OFFICINA LA PRIMA - Garage Manager 0.1.10
 
-          CORREZIONE 0.1.9 - PERSONA FISICA / FATTURAPA
-          - anagrafica Cliente: nuovo campo Tipo cliente
-          - tipi disponibili: Persona fisica / privato, Impresa / professionista, Pubblica Amministrazione
-          - per Persona fisica italiana la Partita IVA NON e richiesta nell'esportazione FatturaPA
-          - per Persona fisica viene richiesto il Codice Fiscale, necessario per identificare il cliente nell'XML
-          - se manca il Codice Fiscale, il messaggio ora specifica chiaramente che la P.IVA non serve e che va compilato il CF
-          - per Impresa / professionista continua a essere richiesta la Partita IVA
-          - per PA resta il formato FPA12 con codice ufficio a 6 caratteri
-          - i clienti gia presenti vengono classificati automaticamente: con P.IVA = Impresa/Professionista; FPA12 = PA; gli altri = Persona fisica
-          - test automatico: XML FatturaPA generato con cliente persona fisica senza P.IVA e con solo Codice Fiscale
+          COMPLETAMENTO 0.1.10
+          - FATTURE: modalita di pagamento direttamente nella fattura
+          - scelte rapide: Contanti (MP01), Carta/POS (MP08), Bonifico bancario (MP05)
+          - la modalita scelta viene salvata nella fattura, mostrata nell'elenco, stampata nel PDF e riutilizzata nel FatturaPA/SDI
+          - PREVENTIVI: IVA impostabile per ogni singola riga
+          - ogni riga preventivo calcola automaticamente imponibile, IVA e totale lordo
+          - il preventivo mostra e stampa imponibile complessivo, IVA complessiva e totale
+          - i vecchi preventivi vengono mantenuti senza alterarne il totale e migrati come righe IVA 0%
+          - DATI AZIENDA: nuovo selettore Tipo soggetto fiscale
+          - scelte: Societa/ente, Ditta individuale/persona fisica con P.IVA, Professionista/autonomo con P.IVA
+          - DATI AZIENDA: Regime fiscale selezionabile da elenco FatturaPA RF01-RF19, incluso RF19 Regime forfettario
+          - avviso se viene abbinato RF19 a una societa, da verificare con il commercialista
+          - pagamento predefinito configurabile anche nei Dati Azienda
 
-          RESTA INVARIATO TUTTO IL RESTO DELLA 0.1.8
+          RESTA PRESENTE TUTTO IL RESTO
+          - scelta Persona fisica / Societa durante Esporta FatturaPA
+          - Persona fisica senza obbligo di P.IVA e con Codice Fiscale
           - Dati Azienda nel menu laterale
           - XML FatturaPA / SDI
           - login multiutente
           - database offline selezionabile anche da USB
-          - logo su gradiente
-          - sfondo Dashboard selezionabile
-          - fatture a righe con IVA
+          - logo su gradiente e sfondo Dashboard selezionabile
           - tagliandi nel calendario
-          - PDF e preventivi
+          - PDF, fatture, preventivi, magazzino, fornitori, backup e report
 
-          IMPORTANTE
-          Per una persona fisica italiana la Partita IVA non e necessaria, ma per la FatturaPA il Codice Fiscale del cliente deve essere compilato.
+          NOTA FISCALE
+          Tipo soggetto e regime fiscale devono essere impostati in base alla situazione reale dell'officina. Per il primo utilizzo fiscale dell'XML FatturaPA e consigliato verificare i dati con il commercialista.
           "@ | Set-Content release\LEGGIMI.txt
 
       - name: Upload Windows build
         uses: actions/upload-artifact@v4
         with:
-          name: LA_PRIMA_Garage_Manager_Windows_0_1_9
+          name: LA_PRIMA_Garage_Manager_Windows_0_1_10
           path: release/*
           retention-days: 30
