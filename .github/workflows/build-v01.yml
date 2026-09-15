@@ -36,56 +36,56 @@ jobs:
 
       - name: Syntax check
         shell: powershell
-        run: python -m py_compile v0_1\core.py v0_1\db_selector.py v0_1\car_catalog.py v0_1\dashboard_mixin.py v0_1\clients_vehicles_mixin.py v0_1\jobs_appointments_mixin.py v0_1\services_mixin.py v0_1\quotes_mixin.py v0_1\invoices_suppliers_mixin.py v0_1\inventory_deadlines_mixin.py v0_1\misc_mixin.py v0_1\main.py v0_1\main_011.py v0_1\main_013.py v0_1\main_013_entry.py v0_1\main_014.py v0_1\main_015.py v0_1\fatturapa.py v0_1\main_016.py v0_1\fatturapa_017.py v0_1\main_017.py v0_1\main_017_entry.py v0_1\main_018.py v0_1\main_018_entry.py v0_1\smoke_018.py v0_1\resources_rc.py
+        run: python -m py_compile v0_1\core.py v0_1\db_selector.py v0_1\car_catalog.py v0_1\dashboard_mixin.py v0_1\clients_vehicles_mixin.py v0_1\jobs_appointments_mixin.py v0_1\services_mixin.py v0_1\quotes_mixin.py v0_1\invoices_suppliers_mixin.py v0_1\inventory_deadlines_mixin.py v0_1\misc_mixin.py v0_1\main.py v0_1\main_011.py v0_1\main_013.py v0_1\main_013_entry.py v0_1\main_014.py v0_1\main_015.py v0_1\fatturapa.py v0_1\main_016.py v0_1\fatturapa_017.py v0_1\main_017.py v0_1\main_017_entry.py v0_1\main_018.py v0_1\main_018_entry.py v0_1\main_019.py v0_1\main_019_entry.py v0_1\smoke_019.py v0_1\resources_rc.py
 
-      - name: Dati Azienda sidebar smoke test
+      - name: Persona fisica FatturaPA smoke test
         shell: powershell
         run: |
           $env:QT_QPA_PLATFORM='offscreen'
-          python v0_1\smoke_018.py
+          python v0_1\smoke_019.py
 
       - name: Build Windows EXE
         shell: powershell
-        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager_0_1_8" --add-data "v0_1/assets;assets" --paths "v0_1" v0_1/main_018_entry.py
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager_0_1_9" --add-data "v0_1/assets;assets" --paths "v0_1" v0_1/main_019_entry.py
 
       - name: Package
         shell: powershell
         run: |
           New-Item -ItemType Directory -Force -Path release | Out-Null
-          Copy-Item dist\LA_PRIMA_Garage_Manager_0_1_8.exe release\LA_PRIMA_Garage_Manager_0_1_8.exe
-          Copy-Item smoke_018.png release\VERIFICA_DATI_AZIENDA_0_1_8.png
+          Copy-Item dist\LA_PRIMA_Garage_Manager_0_1_9.exe release\LA_PRIMA_Garage_Manager_0_1_9.exe
+          Copy-Item smoke_fatturapa_pf_019.xml release\ESEMPIO_FATTURAPA_PERSONA_FISICA.xml
           @"
-          OFFICINA LA PRIMA - Garage Manager 0.1.8
+          OFFICINA LA PRIMA - Garage Manager 0.1.9
 
-          NOVITA 0.1.8
-          - Dati Azienda rimosso dalla pagina Impostazioni
-          - nuova voce Dati Azienda nel menu laterale, subito sotto Impostazioni
-          - pagina dedicata e scrollabile con campi realmente compilabili
-          - pulsante Salva Dati Azienda salva i valori nel database attualmente in uso
-          - pulsante Verifica dati obbligatori controlla i campi base necessari a FatturaPA
-          - campi aziendali: ragione sociale, P.IVA, CF, regime fiscale, indirizzo, civico, CAP, comune, provincia, nazione, telefono, email e PEC
-          - dati REA opzionali: ufficio, numero, capitale sociale, assetto societario e stato liquidazione
-          - pagamenti predefiniti: IBAN, banca, condizioni e modalita di pagamento
-          - i dati salvati vengono riutilizzati automaticamente dall'esportazione XML FatturaPA/SDI
+          CORREZIONE 0.1.9 - PERSONA FISICA / FATTURAPA
+          - anagrafica Cliente: nuovo campo Tipo cliente
+          - tipi disponibili: Persona fisica / privato, Impresa / professionista, Pubblica Amministrazione
+          - per Persona fisica italiana la Partita IVA NON e richiesta nell'esportazione FatturaPA
+          - per Persona fisica viene richiesto il Codice Fiscale, necessario per identificare il cliente nell'XML
+          - se manca il Codice Fiscale, il messaggio ora specifica chiaramente che la P.IVA non serve e che va compilato il CF
+          - per Impresa / professionista continua a essere richiesta la Partita IVA
+          - per PA resta il formato FPA12 con codice ufficio a 6 caratteri
+          - i clienti gia presenti vengono classificati automaticamente: con P.IVA = Impresa/Professionista; FPA12 = PA; gli altri = Persona fisica
+          - test automatico: XML FatturaPA generato con cliente persona fisica senza P.IVA e con solo Codice Fiscale
 
-          RESTANO PRESENTI
+          RESTA INVARIATO TUTTO IL RESTO DELLA 0.1.8
+          - Dati Azienda nel menu laterale
           - XML FatturaPA / SDI
-          - login multiutente con password facoltativa
-          - selezione database offline anche da USB
-          - logo completo su gradiente bianco-grigio
+          - login multiutente
+          - database offline selezionabile anche da USB
+          - logo su gradiente
           - sfondo Dashboard selezionabile
-          - fatture a righe con IVA e calcoli automatici
-          - tagliandi programmati nel calendario
-          - PDF singoli e riepilogativi
-          - preventivi a voci
+          - fatture a righe con IVA
+          - tagliandi nel calendario
+          - PDF e preventivi
 
           IMPORTANTE
-          Il programma genera il file XML ma non lo invia automaticamente allo SDI. Prima del primo utilizzo fiscale reale, verificare il primo XML con il commercialista o con i controlli disponibili sul portale dell'Agenzia delle Entrate.
+          Per una persona fisica italiana la Partita IVA non e necessaria, ma per la FatturaPA il Codice Fiscale del cliente deve essere compilato.
           "@ | Set-Content release\LEGGIMI.txt
 
       - name: Upload Windows build
         uses: actions/upload-artifact@v4
         with:
-          name: LA_PRIMA_Garage_Manager_Windows_0_1_8
+          name: LA_PRIMA_Garage_Manager_Windows_0_1_9
           path: release/*
           retention-days: 30
