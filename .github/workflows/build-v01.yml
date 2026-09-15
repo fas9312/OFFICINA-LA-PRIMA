@@ -36,7 +36,7 @@ jobs:
 
       - name: Syntax check
         shell: powershell
-        run: python -m py_compile v0_1\core.py v0_1\car_catalog.py v0_1\dashboard_mixin.py v0_1\clients_vehicles_mixin.py v0_1\jobs_appointments_mixin.py v0_1\services_mixin.py v0_1\quotes_mixin.py v0_1\invoices_suppliers_mixin.py v0_1\inventory_deadlines_mixin.py v0_1\misc_mixin.py v0_1\main.py v0_1\main_011.py v0_1\main_013.py v0_1\smoke_013.py v0_1\resources_rc.py
+        run: python -m py_compile v0_1\core.py v0_1\car_catalog.py v0_1\dashboard_mixin.py v0_1\clients_vehicles_mixin.py v0_1\jobs_appointments_mixin.py v0_1\services_mixin.py v0_1\quotes_mixin.py v0_1\invoices_suppliers_mixin.py v0_1\inventory_deadlines_mixin.py v0_1\misc_mixin.py v0_1\main.py v0_1\main_011.py v0_1\main_013.py v0_1\main_013_entry.py v0_1\smoke_013.py v0_1\resources_rc.py
 
       - name: UI and schema smoke test
         shell: powershell
@@ -46,7 +46,7 @@ jobs:
 
       - name: Build Windows EXE
         shell: powershell
-        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager_0_1_3" --add-data "v0_1/assets;assets" --paths "v0_1" v0_1/main_013.py
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name "LA_PRIMA_Garage_Manager_0_1_3" --add-data "v0_1/assets;assets" --paths "v0_1" v0_1/main_013_entry.py
 
       - name: Package
         shell: powershell
